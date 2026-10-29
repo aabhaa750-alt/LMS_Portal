@@ -1,0 +1,21 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+venv/
+env/
+.venv/
+
+# Pytest / Cache
+.pytest_cache/
+.coverage
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+
+# Persistent Data (optional in git; database is kept local)
+*.db-journal
