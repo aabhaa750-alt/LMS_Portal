@@ -35,6 +35,13 @@ const ICONS = {
   'zoom-in': `<svg class="w-current h-current" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/></svg>`,
   'zoom-out': `<svg class="w-current h-current" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM7 10h6"/></svg>`,
   'check': `<svg class="w-current h-current" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>`,
+  'bot': `<svg class="w-current h-current" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h.01M15 9h.01"/></svg>`,
+  'brain': `<svg class="w-current h-current" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>`,
+  'message-square': `<svg class="w-current h-current" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>`,
+  'lightbulb': `<svg class="w-current h-current" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>`,
+  'send': `<svg class="w-current h-current" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>`,
+  'copy': `<svg class="w-current h-current" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>`,
+  'refresh': `<svg class="w-current h-current" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>`,
 };
 
 function getIcon(name, extraClasses = 'w-5 h-5') {
@@ -90,26 +97,26 @@ function showConfirmModal({ title, message, confirmText = 'Confirm', onConfirm, 
   if (!modalContainer) return;
 
   const btnStyle = isDestructive
-    ? 'bg-rose-600 hover:bg-rose-700 text-white'
-    : 'bg-blue-600 hover:bg-blue-700 text-white';
+    ? 'bg-rose-600 hover:bg-rose-700 text-white shadow-rose-200'
+    : 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-200';
 
   modalContainer.innerHTML = `
-    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop animate-fade-in" id="confirm-modal-backdrop">
-      <div class="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-md w-full p-6 space-y-4">
-        <div class="flex items-start gap-3">
-          <div class="p-2.5 rounded-xl ${isDestructive ? 'bg-rose-50 text-rose-600' : 'bg-blue-50 text-blue-600'}">
-            ${getIcon(isDestructive ? 'alert-triangle' : 'check-circle', 'w-6 h-6')}
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop bg-slate-950/40 backdrop-blur-xs animate-fade-in" id="confirm-modal-backdrop">
+      <div class="bg-white rounded-2xl shadow-2xl border border-slate-200/90 max-w-md w-full p-6 space-y-5 animate-scale-up">
+        <div class="flex items-start gap-4">
+          <div class="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 ${isDestructive ? 'bg-rose-50 text-rose-600 border border-rose-100' : 'bg-blue-50 text-blue-600 border border-blue-100'}">
+            ${getIcon(isDestructive ? 'alert-triangle' : 'check-circle', 'w-5 h-5')}
           </div>
-          <div>
-            <h3 class="text-base font-semibold text-slate-900">${escapeHtml(title)}</h3>
-            <p class="text-sm text-slate-500 mt-1">${escapeHtml(message)}</p>
+          <div class="min-w-0 flex-1 pt-0.5">
+            <h3 class="text-sm font-bold text-slate-900 tracking-tight">${escapeHtml(title)}</h3>
+            <p class="text-xs text-slate-500 mt-1.5 leading-relaxed font-normal">${escapeHtml(message)}</p>
           </div>
         </div>
-        <div class="flex justify-end gap-3 pt-2">
-          <button id="confirm-cancel-btn" class="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">
+        <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
+          <button id="confirm-cancel-btn" class="px-4 py-2 text-xs font-semibold text-slate-700 bg-slate-100/90 hover:bg-slate-200/90 rounded-xl transition-all border border-slate-200/60 cursor-pointer">
             Cancel
           </button>
-          <button id="confirm-action-btn" class="px-4 py-2 text-sm font-medium rounded-lg transition-colors shadow-sm ${btnStyle}">
+          <button id="confirm-action-btn" class="px-4 py-2 text-xs font-semibold rounded-xl transition-all shadow-xs cursor-pointer ${btnStyle}">
             ${escapeHtml(confirmText)}
           </button>
         </div>
@@ -121,6 +128,12 @@ function showConfirmModal({ title, message, confirmText = 'Confirm', onConfirm, 
     modalContainer.innerHTML = '';
   };
 
+  document.getElementById('confirm-modal-backdrop').onclick = (e) => {
+    if (e.target.id === 'confirm-modal-backdrop') {
+      modalContainer.innerHTML = '';
+    }
+  };
+
   document.getElementById('confirm-action-btn').onclick = async () => {
     modalContainer.innerHTML = '';
     if (onConfirm) await onConfirm();
@@ -130,14 +143,14 @@ function showConfirmModal({ title, message, confirmText = 'Confirm', onConfirm, 
 // Reusable Empty State Renderer
 function renderEmptyState({ icon = 'folder', title, description, actionText, actionId }) {
   return `
-    <div class="flex flex-col items-center justify-center py-12 px-4 text-center border-2 border-dashed border-slate-200 rounded-2xl bg-white/50">
-      <div class="p-3 bg-slate-100 text-slate-400 rounded-2xl mb-3">
-        ${getIcon(icon, 'w-8 h-8')}
+    <div class="flex flex-col items-center justify-center py-14 px-6 text-center border border-slate-200/80 rounded-2xl bg-white shadow-2xs">
+      <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-slate-100 to-blue-50 text-slate-400 flex items-center justify-center mb-3.5 shadow-2xs border border-slate-200/60">
+        ${getIcon(icon, 'w-6 h-6 text-slate-500')}
       </div>
-      <h3 class="text-sm font-semibold text-slate-800">${escapeHtml(title)}</h3>
-      <p class="text-xs text-slate-500 max-w-sm mt-1 mb-4">${escapeHtml(description)}</p>
+      <h3 class="text-sm font-bold text-slate-900 tracking-tight">${escapeHtml(title)}</h3>
+      <p class="text-xs text-slate-500 max-w-sm mt-1.5 mb-5 leading-relaxed">${escapeHtml(description)}</p>
       ${actionText && actionId ? `
-        <button id="${actionId}" class="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm">
+        <button id="${actionId}" class="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-all shadow-xs btn-press">
           ${getIcon('plus', 'w-3.5 h-3.5')}
           ${escapeHtml(actionText)}
         </button>
@@ -149,9 +162,9 @@ function renderEmptyState({ icon = 'folder', title, description, actionText, act
 // Loading state
 function renderLoadingState(text = 'Loading content...') {
   return `
-    <div class="flex flex-col items-center justify-center py-16 text-slate-400 gap-3">
-      <div class="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-      <span class="text-xs font-medium text-slate-500">${escapeHtml(text)}</span>
+    <div class="flex flex-col items-center justify-center py-14 text-slate-400 gap-3">
+      <div class="w-7 h-7 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+      <span class="text-xs font-medium text-slate-500 animate-pulse">${escapeHtml(text)}</span>
     </div>
   `;
 }
@@ -216,34 +229,117 @@ function escapeHtml(str) {
 
 function getTypeBadge(type) {
   const styles = {
-    PDF: 'bg-rose-50 text-rose-700 border-rose-200',
-    Presentation: 'bg-amber-50 text-amber-700 border-amber-200',
-    Document: 'bg-blue-50 text-blue-700 border-blue-200',
-    Spreadsheet: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    Image: 'bg-purple-50 text-purple-700 border-purple-200',
-    Text: 'bg-slate-50 text-slate-700 border-slate-200',
+    PDF: 'bg-rose-50 text-rose-700 border-rose-200/80',
+    Presentation: 'bg-amber-50 text-amber-800 border-amber-200/80',
+    Document: 'bg-blue-50 text-blue-700 border-blue-200/80',
+    Spreadsheet: 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
+    Image: 'bg-purple-50 text-purple-700 border-purple-200/80',
+    Text: 'bg-slate-100 text-slate-700 border-slate-200/80',
   };
-  const cls = styles[type] || 'bg-slate-50 text-slate-700 border-slate-200';
-  return `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold border ${cls}">${escapeHtml(type)}</span>`;
+  const cls = styles[type] || 'bg-slate-50 text-slate-700 border-slate-200/80';
+  return `<span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold tracking-wide uppercase border ${cls}">${escapeHtml(type)}</span>`;
 }
 
 function getPriorityBadge(priority) {
   const styles = {
-    High: 'bg-rose-50 text-rose-700 border-rose-200',
-    Medium: 'bg-amber-50 text-amber-700 border-amber-200',
-    Low: 'bg-slate-100 text-slate-700 border-slate-200',
+    High: 'bg-rose-50 text-rose-700 border-rose-200/80',
+    Medium: 'bg-amber-50 text-amber-800 border-amber-200/80',
+    Low: 'bg-slate-100 text-slate-600 border-slate-200/80',
   };
   const cls = styles[priority] || styles.Medium;
-  return `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium border ${cls}">${escapeHtml(priority)}</span>`;
+  return `<span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold tracking-wide uppercase border ${cls}">${escapeHtml(priority)}</span>`;
 }
 
 function getStatusBadge(status) {
   const styles = {
-    'Completed': 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    'In Progress': 'bg-blue-50 text-blue-700 border-blue-200',
-    'To Do': 'bg-slate-100 text-slate-700 border-slate-200',
-    'Not Started': 'bg-slate-100 text-slate-600 border-slate-200',
+    'Completed': 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
+    'In Progress': 'bg-blue-50 text-blue-700 border-blue-200/80',
+    'To Do': 'bg-slate-100 text-slate-700 border-slate-200/80',
+    'Not Started': 'bg-slate-100 text-slate-600 border-slate-200/80',
   };
   const cls = styles[status] || styles['Not Started'];
-  return `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium border ${cls}">${escapeHtml(status)}</span>`;
+  return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold border ${cls}">${escapeHtml(status)}</span>`;
 }
+
+// Format AI Markdown with rich typography, bullet points, code blocks, and slide citation pills
+function formatAiMarkdown(rawText) {
+  if (!rawText) return '';
+  let text = escapeHtml(rawText);
+
+  // Format Code Blocks ```lang ... ```
+  text = text.replace(/```([\s\S]*?)```/g, (match, p1) => {
+    return `<pre class="bg-slate-900 text-slate-100 rounded-xl p-3 my-2 text-xs font-mono overflow-x-auto border border-slate-800"><code>${p1.trim()}</code></pre>`;
+  });
+
+  // Format inline `code`
+  text = text.replace(/`([^`]+)`/g, '<code class="bg-slate-100 text-indigo-700 px-1.5 py-0.5 rounded text-[11px] font-mono border border-slate-200">$1</code>');
+
+  // Format Slide / Deck Citations like [Deck.pptx, Slide 4] or [lecture1.pdf, Page 2]
+  text = text.replace(/\[([^\]]+?\.(?:pptx|ppt|pdf)[^\]]*?)\]/gi, (match, p1) => {
+    return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono font-semibold bg-indigo-50 border border-indigo-200 text-indigo-700 shadow-2xs">${getIcon('sparkles', 'w-3 h-3 text-indigo-500')} ${p1}</span>`;
+  });
+
+  // Headers ###, ##, #
+  text = text.replace(/^### (.*$)/gim, '<h3 class="text-sm font-bold text-slate-900 mt-3.5 mb-1.5 flex items-center gap-1.5">$1</h3>');
+  text = text.replace(/^## (.*$)/gim, '<h2 class="text-base font-bold text-slate-900 mt-4 mb-2 pb-1 border-b border-slate-100">$1</h2>');
+  text = text.replace(/^# (.*$)/gim, '<h1 class="text-lg font-extrabold text-slate-900 mt-5 mb-2.5">$1</h1>');
+
+  // Bold & Italic
+  text = text.replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold text-slate-900">$1</strong>');
+  text = text.replace(/\*([^*]+)\*/g, '<em class="italic text-slate-700">$1</em>');
+
+  // Blockquotes > text
+  text = text.replace(/^> (.*$)/gim, '<blockquote class="border-l-3 border-blue-500 bg-blue-50/50 pl-3 py-1 my-2 text-xs text-slate-700 rounded-r-md italic">$1</blockquote>');
+
+  // Bullet Lists
+  const lines = text.split('\n');
+  let inList = false;
+  let inNumberedList = false;
+  const processedLines = [];
+
+  for (let line of lines) {
+    const trimmed = line.trim();
+    if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+      if (!inList) {
+        processedLines.push('<ul class="list-disc pl-5 space-y-1 my-2 text-xs text-slate-700">');
+        inList = true;
+      }
+      processedLines.push(`<li>${trimmed.substring(2)}</li>`);
+    } else if (/^\d+\.\s/.test(trimmed)) {
+      if (!inNumberedList) {
+        processedLines.push('<ol class="list-decimal pl-5 space-y-1 my-2 text-xs text-slate-700">');
+        inNumberedList = true;
+      }
+      processedLines.push(`<li>${trimmed.replace(/^\d+\.\s/, '')}</li>`);
+    } else {
+      if (inList) {
+        processedLines.push('</ul>');
+        inList = false;
+      }
+      if (inNumberedList) {
+        processedLines.push('</ol>');
+        inNumberedList = false;
+      }
+      if (trimmed.length > 0) {
+        processedLines.push(`<p class="text-xs text-slate-700 leading-relaxed my-1.5">${line}</p>`);
+      } else {
+        processedLines.push('<div class="h-1.5"></div>');
+      }
+    }
+  }
+  if (inList) processedLines.push('</ul>');
+  if (inNumberedList) processedLines.push('</ol>');
+
+  return processedLines.join('\n');
+}
+
+// Clipboard Helper
+async function copyToClipboard(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    showToast('Copied to clipboard!', 'success');
+  } catch (err) {
+    showToast('Unable to copy to clipboard', 'error');
+  }
+}
+

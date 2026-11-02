@@ -81,6 +81,16 @@ const API = {
     async getStats() {
       return API.request('/dashboard');
     },
+    async getDailyPlan(date) {
+      const q = date ? `?date=${encodeURIComponent(date)}` : '';
+      return API.request(`/dashboard/daily-plan${q}`);
+    },
+    async toggleDailyPlan(itemKey, planDate = null, completed = null) {
+      return API.request('/dashboard/daily-plan/toggle', {
+        method: 'POST',
+        body: JSON.stringify({ item_key: itemKey, plan_date: planDate, completed }),
+      });
+    },
   },
 
   // Courses Endpoints
@@ -188,6 +198,12 @@ const API = {
     },
     async toggleComplete(id) {
       return API.request(`/resources/${id}/toggle-complete`, { method: 'POST' });
+    },
+    async saveProgress(id, progressData) {
+      return API.request(`/resources/${id}/progress`, {
+        method: 'POST',
+        body: JSON.stringify(progressData),
+      });
     },
     downloadUrl(id) {
       return `${API.baseUrl}/resources/${id}/download`;
@@ -297,4 +313,54 @@ const API = {
       return `${API.baseUrl}/system/backup`;
     },
   },
+
+  // AI Learning Assistant Endpoints
+  ai: {
+    async getStatus() {
+      return API.request('/ai/status');
+    },
+    async updateApiKey(data) {
+      return API.request('/ai/api-key', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      });
+    },
+    async indexAll() {
+      return API.request('/ai/index-all', { method: 'POST' });
+    },
+    async listConversations(params = {}) {
+      const cleanParams = Object.fromEntries(
+        Object.entries(params).filter(([_, v]) => v !== null && v !== undefined && v !== '')
+      );
+      const q = new URLSearchParams(cleanParams).toString();
+      return API.request(`/ai/conversations${q ? '?' + q : ''}`);
+    },
+    async getConversation(id) {
+      return API.request(`/ai/conversations/${id}`);
+    },
+    async deleteConversation(id) {
+      return API.request(`/ai/conversations/${id}`, { method: 'DELETE' });
+    },
+    async chat(data) {
+      return API.request('/ai/chat', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      });
+    },
+    async explainConcept(data) {
+      return API.request('/ai/explain-concept', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      });
+    },
+    async generateNotes(resourceId, saveAsNote = false) {
+      return API.request(`/ai/generate-notes/${resourceId}?save_as_note=${saveAsNote}`, {
+        method: 'POST',
+      });
+    },
+    async getResourceChunks(resourceId) {
+      return API.request(`/ai/resource-chunks/${resourceId}`);
+    },
+  },
 };
+

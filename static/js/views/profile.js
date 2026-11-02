@@ -5,95 +5,99 @@ const ProfileView = {
       <div class="space-y-6 animate-fade-in pb-12 max-w-4xl mx-auto">
         <!-- Header -->
         <div>
-          <h1 class="text-2xl font-bold tracking-tight text-slate-900">Personal Student Profile</h1>
-          <p class="text-xs text-slate-500 mt-1">Manage your academic identity, MBA cohort, semester, and credentials</p>
+          <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-blue-50/90 border border-blue-200/70 text-blue-800 text-[11px] font-semibold tracking-wide uppercase mb-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
+            MBA Candidate Identity
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">Personal Student Profile</h1>
+          <p class="text-xs sm:text-sm text-slate-500 mt-1">Manage your academic identity, MBA cohort, semester, and credentials</p>
         </div>
 
         <!-- Profile Overview Card -->
-        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 flex flex-col sm:flex-row sm:items-center gap-6">
-          <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white flex items-center justify-center text-2xl font-black shrink-0 shadow-md shadow-blue-500/20" id="profile-avatar-display">
+        <div class="bg-white rounded-2xl border border-slate-200/70 shadow-2xs hover:shadow-md p-6 sm:p-7 flex flex-col sm:flex-row sm:items-center gap-6 card-hover transition-all">
+          <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-700 via-indigo-600 to-violet-700 text-white flex items-center justify-center text-3xl font-extrabold shrink-0 shadow-md shadow-indigo-500/25 ring-4 ring-indigo-50" id="profile-avatar-display">
             A
           </div>
           <div class="space-y-1">
-            <h2 class="text-xl font-bold text-slate-900" id="profile-name-display">Alex Morgan</h2>
-            <p class="text-xs font-semibold text-blue-600" id="profile-program-display">Master of Business Administration (MBA)</p>
-            <p class="text-xs text-slate-500" id="profile-meta-display">Year 1 • Semester 1 • student@mba.edu</p>
+            <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900" id="profile-name-display">Alex Morgan</h2>
+            <p class="text-xs sm:text-sm font-semibold text-blue-600" id="profile-program-display">Master of Business Administration (MBA)</p>
+            <p class="text-xs text-slate-500 font-medium" id="profile-meta-display">Year 1 • Semester 1 • student@mba.edu</p>
           </div>
         </div>
 
         <!-- Edit Profile Details Form -->
-        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-6">
-          <div class="pb-3 border-b border-slate-100">
-            <h3 class="text-sm font-bold text-slate-900">Academic &amp; Contact Information</h3>
-            <p class="text-xs text-slate-500">Update your academic track and greeting preferences</p>
+        <div class="bg-white rounded-2xl border border-slate-200/70 shadow-sm p-6 sm:p-7 space-y-6">
+          <div class="pb-3.5 border-b border-slate-100">
+            <h3 class="text-sm font-bold text-slate-900 tracking-tight">Academic &amp; Contact Information</h3>
+            <p class="text-xs text-slate-500 mt-0.5">Update your academic track and greeting preferences</p>
           </div>
 
           <form id="profile-edit-form" class="space-y-4">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label for="prof-name" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Full Name</label>
+                <label for="prof-name" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Full Name</label>
                 <input id="prof-name" type="text" required
-                  class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600">
+                  class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 focus:bg-white transition-all">
               </div>
 
               <div>
-                <label for="prof-email" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Email Address</label>
+                <label for="prof-email" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Email Address</label>
                 <input id="prof-email" type="email" disabled
-                  class="w-full px-3.5 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-xs text-slate-500 cursor-not-allowed">
+                  class="w-full px-3.5 py-2.5 bg-slate-100 border border-slate-200/60 rounded-xl text-xs text-slate-400 cursor-not-allowed font-mono">
               </div>
             </div>
 
             <div>
-              <label for="prof-program" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Program / Degree</label>
+              <label for="prof-program" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Program / Degree</label>
               <input id="prof-program" type="text"
-                class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600">
+                class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 focus:bg-white transition-all">
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label for="prof-year" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Academic Year</label>
+                <label for="prof-year" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Academic Year</label>
                 <input id="prof-year" type="text" placeholder="e.g. Year 1 or 2026-2027"
-                  class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600">
+                  class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 focus:bg-white transition-all">
               </div>
 
               <div>
-                <label for="prof-semester" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Current Semester</label>
+                <label for="prof-semester" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Current Semester</label>
                 <input id="prof-semester" type="text" placeholder="e.g. Semester 1"
-                  class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600">
+                  class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 focus:bg-white transition-all">
               </div>
             </div>
 
-            <div class="flex justify-end pt-2">
-              <button type="submit" id="btn-save-profile" class="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm transition-colors">
+            <div class="flex justify-end pt-3">
+              <button type="submit" id="btn-save-profile" class="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs transition-all hover:shadow-sm cursor-pointer">
                 ${getIcon('check', 'w-3.5 h-3.5')}
-                Save Profile Changes
+                <span>Save Profile Changes</span>
               </button>
             </div>
           </form>
         </div>
 
         <!-- Change Password Section -->
-        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-6">
-          <div class="pb-3 border-b border-slate-100">
-            <h3 class="text-sm font-bold text-slate-900">Security &amp; Password</h3>
-            <p class="text-xs text-slate-500">Update your login password</p>
+        <div class="bg-white rounded-2xl border border-slate-200/70 shadow-sm p-6 sm:p-7 space-y-6">
+          <div class="pb-3.5 border-b border-slate-100">
+            <h3 class="text-sm font-bold text-slate-900 tracking-tight">Security &amp; Password</h3>
+            <p class="text-xs text-slate-500 mt-0.5">Update your login password</p>
           </div>
 
           <form id="profile-password-form" class="space-y-4 max-w-md">
             <div>
-              <label for="pwd-current" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Current Password</label>
+              <label for="pwd-current" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Current Password</label>
               <input id="pwd-current" type="password" required
-                class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600">
+                class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200/80 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 focus:bg-white transition-all">
             </div>
 
             <div>
-              <label for="pwd-new" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">New Password</label>
+              <label for="pwd-new" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">New Password</label>
               <input id="pwd-new" type="password" required minlength="6"
-                class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600">
+                class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200/80 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 focus:bg-white transition-all">
             </div>
 
             <div class="flex justify-start pt-2">
-              <button type="submit" id="btn-change-pwd" class="px-4 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors">
+              <button type="submit" id="btn-change-pwd" class="px-4 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all cursor-pointer">
                 Update Password
               </button>
             </div>

@@ -13,20 +13,24 @@ const TasksView = {
         <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 class="text-2xl font-bold tracking-tight text-slate-900">Assignments &amp; Deadlines</h1>
-            <p class="text-xs text-slate-500 mt-1">Track case submissions, midterm exams, group projects, and deliverables</p>
+            <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-blue-50/90 border border-blue-200/70 text-blue-800 text-[11px] font-semibold tracking-wide uppercase mb-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
+              MBA Deliverables &amp; Schedule
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">Assignments &amp; Deadlines</h1>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1">Track case submissions, midterm exams, group projects, and deliverables</p>
           </div>
-          <button id="btn-create-task-main" class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm transition-colors">
+          <button id="btn-create-task-main" class="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs transition-all hover:shadow-sm cursor-pointer">
             ${getIcon('plus', 'w-3.5 h-3.5')}
-            Add Assignment / Exam
+            <span>Add Assignment / Exam</span>
           </button>
         </div>
 
         <!-- Toolbar (Filters & View Toggle) -->
-        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/70 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div class="flex flex-wrap items-center gap-2.5 flex-1">
             <!-- Status Filter -->
-            <select id="task-filter-status" class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-blue-500">
+            <select id="task-filter-status" class="px-3.5 py-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 focus:bg-white transition-all">
               <option value="">All Statuses</option>
               <option value="To Do">To Do</option>
               <option value="In Progress">In Progress</option>
@@ -34,12 +38,12 @@ const TasksView = {
             </select>
 
             <!-- Course Filter -->
-            <select id="task-filter-course" class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-blue-500">
+            <select id="task-filter-course" class="px-3.5 py-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 focus:bg-white transition-all">
               <option value="">All Subjects</option>
             </select>
 
             <!-- Priority Filter -->
-            <select id="task-filter-priority" class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-blue-500">
+            <select id="task-filter-priority" class="px-3.5 py-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 focus:bg-white transition-all">
               <option value="">All Priorities</option>
               <option value="High">High Priority</option>
               <option value="Medium">Medium</option>
@@ -48,14 +52,14 @@ const TasksView = {
           </div>
 
           <!-- View Mode Toggle -->
-          <div class="flex items-center gap-1 border border-slate-200 rounded-xl p-1 bg-slate-50 shrink-0">
-            <button id="task-mode-list" class="p-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 ${this.viewMode === 'list' ? 'bg-white shadow-xs text-blue-600' : 'text-slate-500'}">
+          <div class="flex items-center gap-1 border border-slate-200/80 rounded-xl p-1 bg-slate-50 shrink-0">
+            <button id="task-mode-list" class="p-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${this.viewMode === 'list' ? 'bg-white shadow-xs text-blue-600 font-bold' : 'text-slate-500 hover:text-slate-700'}">
               ${getIcon('file-text', 'w-3.5 h-3.5')}
-              List View
+              <span>List View</span>
             </button>
-            <button id="task-mode-calendar" class="p-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 ${this.viewMode === 'calendar' ? 'bg-white shadow-xs text-blue-600' : 'text-slate-500'}">
+            <button id="task-mode-calendar" class="p-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${this.viewMode === 'calendar' ? 'bg-white shadow-xs text-blue-600 font-bold' : 'text-slate-500 hover:text-slate-700'}">
               ${getIcon('calendar', 'w-3.5 h-3.5')}
-              Calendar View
+              <span>Calendar View</span>
             </button>
           </div>
         </div>
@@ -196,42 +200,42 @@ const TasksView = {
   renderTaskItem(t) {
     const isCompleted = t.status === 'Completed';
     return `
-      <div class="p-4 flex items-center justify-between hover:bg-slate-50/70 transition-colors">
-        <div class="flex items-center gap-3 min-w-0 pr-4">
-          <button class="p-1 rounded-lg text-slate-400 hover:text-emerald-600 transition-colors shrink-0"
+      <div class="p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-3 hover:bg-slate-50/70 transition-colors">
+        <div class="flex items-center gap-3.5 min-w-0 pr-4">
+          <button class="p-1 rounded-lg text-slate-400 hover:text-emerald-600 transition-colors shrink-0 cursor-pointer"
             title="Toggle Status" onclick="TasksView.cycleStatus(${t.id}, '${t.status}')">
             ${isCompleted ? getIcon('check-circle', 'w-5 h-5 text-emerald-600') : getIcon('check-circle', 'w-5 h-5 text-slate-300')}
           </button>
-          <div class="min-w-0">
-            <div class="flex items-center gap-2">
-              <h4 class="text-xs font-bold ${isCompleted ? 'line-through text-slate-400' : 'text-slate-900'} truncate">
+          <div class="min-w-0 space-y-1">
+            <div class="flex items-center gap-2 flex-wrap">
+              <h4 class="text-xs sm:text-sm font-bold ${isCompleted ? 'line-through text-slate-400' : 'text-slate-900'} truncate tracking-tight">
                 ${escapeHtml(t.title)}
               </h4>
-              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-600">
+              <span class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-slate-100 text-slate-600">
                 ${escapeHtml(t.task_type)}
               </span>
             </div>
-            ${t.description ? `<p class="text-[11px] text-slate-500 mt-0.5 line-clamp-1">${escapeHtml(t.description)}</p>` : ''}
-            <div class="flex items-center gap-2 mt-1 text-[11px] text-slate-400">
-              <span class="font-medium text-slate-600">${escapeHtml(t.course_name || 'General')}</span>
+            ${t.description ? `<p class="text-[11px] text-slate-500 line-clamp-1 font-normal leading-relaxed">${escapeHtml(t.description)}</p>` : ''}
+            <div class="flex items-center gap-2 text-[11px] text-slate-400 flex-wrap">
+              <span class="font-semibold text-slate-600">${escapeHtml(t.course_name || 'General')}</span>
               <span>•</span>
               <span class="${t.is_overdue ? 'text-rose-600 font-bold' : ''}">${formatRelative(t.due_date)} (${formatDateTime(t.due_date)})</span>
             </div>
           </div>
         </div>
 
-        <div class="flex items-center gap-3 shrink-0">
+        <div class="flex items-center gap-3 shrink-0 self-end md:self-center">
           ${getPriorityBadge(t.priority)}
-          <select class="text-xs px-2 py-1 rounded-lg border border-slate-200 bg-white text-slate-700 focus:outline-none"
+          <select class="text-xs font-semibold px-2.5 py-1.5 rounded-xl border border-slate-200/80 bg-slate-50 text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white cursor-pointer"
             onchange="TasksView.setStatus(${t.id}, this.value)">
             <option value="To Do" ${t.status === 'To Do' ? 'selected' : ''}>To Do</option>
             <option value="In Progress" ${t.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
             <option value="Completed" ${t.status === 'Completed' ? 'selected' : ''}>Completed</option>
           </select>
-          <button class="p-1 text-slate-400 hover:text-blue-600 rounded-lg hover:bg-slate-100" title="Edit Task" onclick="window.appModals.openEditTask(${t.id})">
+          <button class="p-2 text-slate-400 hover:text-blue-600 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer" title="Edit Task" onclick="window.appModals.openEditTask(${t.id})">
             ${getIcon('edit', 'w-3.5 h-3.5')}
           </button>
-          <button class="p-1 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50" title="Delete Task" onclick="TasksView.confirmDeleteTask(${t.id}, '${escapeHtml(t.title)}')">
+          <button class="p-2 text-slate-400 hover:text-rose-600 rounded-xl hover:bg-rose-50 transition-colors cursor-pointer" title="Delete Task" onclick="TasksView.confirmDeleteTask(${t.id}, '${escapeHtml(t.title)}')">
             ${getIcon('trash', 'w-3.5 h-3.5')}
           </button>
         </div>
@@ -250,7 +254,7 @@ const TasksView = {
     let calendarCells = '';
     // Empty cells before 1st of month
     for (let i = 0; i < firstDay; i++) {
-      calendarCells += `<div class="min-h-[90px] p-2 bg-slate-50/50 border border-slate-100 rounded-xl"></div>`;
+      calendarCells += `<div class="min-h-[96px] p-2 bg-slate-50/40 border border-slate-100 rounded-xl"></div>`;
     }
 
     // Days cells
@@ -259,14 +263,14 @@ const TasksView = {
       const dayTasks = tasks.filter(t => t.due_date && t.due_date.startsWith(dayDateStr));
 
       calendarCells += `
-        <div class="min-h-[90px] p-2 bg-white border border-slate-200/80 rounded-xl flex flex-col justify-between hover:border-blue-400 transition-colors">
+        <div class="min-h-[96px] p-2 bg-white border border-slate-200/80 rounded-xl flex flex-col justify-between hover:border-blue-400 hover:shadow-2xs transition-all">
           <div class="flex items-center justify-between text-xs font-bold text-slate-700">
             <span>${day}</span>
-            ${dayTasks.length > 0 ? `<span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>` : ''}
+            ${dayTasks.length > 0 ? `<span class="w-2 h-2 rounded-full bg-blue-600"></span>` : ''}
           </div>
-          <div class="space-y-1 mt-1 overflow-y-auto max-h-[60px]">
+          <div class="space-y-1 mt-1 overflow-y-auto max-h-[64px]">
             ${dayTasks.map(t => `
-              <div class="p-1 rounded text-[10px] font-semibold truncate ${t.is_overdue ? 'bg-rose-50 text-rose-700' : t.status === 'Completed' ? 'bg-emerald-50 text-emerald-700 line-through' : 'bg-blue-50 text-blue-700'} cursor-pointer"
+              <div class="p-1 rounded-md text-[10px] font-semibold truncate ${t.is_overdue ? 'bg-rose-50 text-rose-700 border border-rose-100' : t.status === 'Completed' ? 'bg-emerald-50 text-emerald-700 line-through' : 'bg-blue-50 text-blue-700 border border-blue-100'} cursor-pointer"
                 title="${escapeHtml(t.title)}" onclick="window.appModals.openEditTask(${t.id})">
                 ${escapeHtml(t.title)}
               </div>
@@ -277,16 +281,16 @@ const TasksView = {
     }
 
     container.innerHTML = `
-      <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-4">
-        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-          <h2 class="text-base font-bold text-slate-900">${currentMonthName} ${this.calendarYear}</h2>
+      <div class="bg-white rounded-2xl border border-slate-200/70 shadow-sm p-6 sm:p-7 space-y-4">
+        <div class="flex items-center justify-between pb-3.5 border-b border-slate-100">
+          <h2 class="text-lg font-bold text-slate-900 tracking-tight">${currentMonthName} ${this.calendarYear}</h2>
           <div class="flex items-center gap-2">
-            <button id="cal-prev-month" class="px-2.5 py-1 text-xs font-semibold bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">&larr; Prev</button>
-            <button id="cal-next-month" class="px-2.5 py-1 text-xs font-semibold bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">Next &rarr;</button>
+            <button id="cal-prev-month" class="px-3 py-1.5 text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition-colors cursor-pointer">&larr; Prev</button>
+            <button id="cal-next-month" class="px-3 py-1.5 text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition-colors cursor-pointer">Next &rarr;</button>
           </div>
         </div>
 
-        <div class="grid grid-cols-7 gap-2 text-center text-xs font-semibold text-slate-400 mb-2">
+        <div class="grid grid-cols-7 gap-2 text-center text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
           <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
         </div>
 

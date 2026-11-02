@@ -161,6 +161,9 @@ class ResourceOut(BaseModel):
     is_completed: bool
     is_bookmarked: bool = False
     last_accessed_at: Optional[datetime] = None
+    last_page_number: Optional[int] = 1
+    last_slide_number: Optional[int] = 1
+    last_position_label: Optional[str] = None
     created_at: datetime
     updated_at: datetime
 
@@ -291,6 +294,58 @@ class SearchResultItem(BaseModel):
     created_at: datetime
 
 
+# Continue Learning
+class ContinueLearningOut(BaseModel):
+    id: int
+    title: str
+    resource_type: str
+    course_id: int
+    course_name: str
+    course_code: Optional[str] = None
+    course_color: Optional[str] = "#2563eb"
+    last_page_number: Optional[int] = 1
+    last_slide_number: Optional[int] = 1
+    last_position: Optional[str] = "Slide 1"
+    last_accessed_at: Optional[datetime] = None
+    relative_time: Optional[str] = None
+
+
+# Daily Study Plan
+class DailyPlanItemOut(BaseModel):
+    id: str  # "topic_1", "task_2", "resource_3", "note_4"
+    type: str  # "topic", "task", "resource", "note"
+    subject: str
+    subject_color: Optional[str] = "#2563eb"
+    title: str
+    activity: str
+    estimated_duration: str
+    action_type: str  # "open_reader", "open_course", "open_tasks", "open_notes", "explain_concept"
+    action_label: str
+    target_id: Optional[int] = None
+    concept_name: Optional[str] = None
+    is_completed: bool = False
+
+
+class DailyPlanOut(BaseModel):
+    date: str
+    total_items: int
+    completed_items: int
+    progress_pct: float
+    items: List[DailyPlanItemOut]
+
+
+class DailyPlanToggleIn(BaseModel):
+    item_key: str
+    plan_date: Optional[str] = None
+    completed: Optional[bool] = None
+
+
+class ProgressUpdateIn(BaseModel):
+    page_number: Optional[int] = 1
+    slide_number: Optional[int] = 1
+    position_label: Optional[str] = None
+
+
 # Dashboard Stats
 class DashboardStatsOut(BaseModel):
     greeting: str
@@ -308,3 +363,54 @@ class DashboardStatsOut(BaseModel):
     bookmarked_resources: List[ResourceOut]
     upcoming_tasks: List[TaskOut]
     study_goal: Optional[StudyGoalOut] = None
+    continue_learning: Optional[ContinueLearningOut] = None
+
+
+# AI Learning Assistant Schemas
+class AiChatRequest(BaseModel):
+    prompt: Optional[str] = None
+    message: Optional[str] = None
+    mode: Optional[str] = "learn"
+    study_mode: Optional[str] = None
+    course_id: Optional[int] = None
+    resource_id: Optional[int] = None
+    conversation_id: Optional[int] = None
+
+
+class AiChatResponse(BaseModel):
+    conversation_id: int
+    message_id: int
+    response: str
+    reply: Optional[str] = None
+    sources: List[dict] = []
+    citations: List[str] = []
+    provider: str
+    mode: str
+    is_configured: bool
+
+
+class AiExplainRequest(BaseModel):
+    concept: str
+    course_id: Optional[int] = None
+    resource_id: Optional[int] = None
+
+
+class AiKeyUpdateRequest(BaseModel):
+    openai_api_key: Optional[str] = None
+    ai_provider: Optional[str] = "openai"
+
+
+class DocumentChunkOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    resource_id: int
+    chunk_type: str
+    chunk_number: int
+    slide_number: Optional[int] = None
+    title: Optional[str] = None
+    section_title: Optional[str] = None
+    content: str
+    token_count: Optional[int] = 0
+    created_at: datetime
+

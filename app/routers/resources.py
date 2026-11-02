@@ -7,9 +7,10 @@ from sqlalchemy.orm import Session
 from sqlalchemy import or_, desc, asc
 from app.database import get_db
 from app.models import User, Course, UnitTopic, Resource, Bookmark, AccessHistory
-from app.schemas import ResourceOut, ResourceUpdate
+from app.schemas import ResourceOut, ResourceUpdate, ProgressUpdateIn
 from app.auth import get_current_user
 from app.storage import save_uploaded_file, get_safe_file_path, delete_stored_file, EXTENSION_TYPE_MAP
+from app.ai_extractor import index_resource_document
 from pathlib import Path
 
 router = APIRouter(prefix="/api/resources", tags=["Resources"])
@@ -46,7 +47,10 @@ def build_resource_out(res: Resource, current_user_id: int, db: Session) -> Reso
         tags=res.tags or "",
         is_completed=res.is_completed,
         is_bookmarked=is_bookmarked,
-        last_accessed_at=last_access.accessed_at if last_access else None,
+        last_accessed_at=last_access.accessed_at if last_access else res.last_accessed_at,
+        last_page_number=(last_access.page_number if last_access and last_access.page_number else (res.last_page_number or 1)),
+        last_slide_number=(last_access.slide_number if last_access and last_access.slide_number else (res.last_slide_number or 1)),
+        last_position_label=(last_access.position_label if last_access and last_access.position_label else (res.last_position_label or "Slide 1")),
         created_at=res.created_at,
         updated_at=res.updated_at,
     )
@@ -123,6 +127,12 @@ async def upload_resource(
     db.add(resource)
     db.commit()
     db.refresh(resource)
+
+    # Automatically extract slides/pages into searchable document chunks
+    try:
+        index_resource_document(db, resource)
+    except Exception as e:
+        print(f"Warning: background chunk indexing failed for resource {resource.id}: {e}")
 
     return build_resource_out(resource, current_user.id, db)
 
@@ -349,3 +359,49 @@ def toggle_resource_complete(
     db.refresh(resource)
 
     return build_resource_out(resource, current_user.id, db)
+
+
+@router.post("/{resource_id}/progress")
+def record_progress(
+    resource_id: int,
+    req: ProgressUpdateIn,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    resource = db.query(Resource).filter(
+        Resource.id == resource_id,
+        Resource.user_id == current_user.id
+    ).first()
+
+    if not resource:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Resource not found")
+
+    now = datetime.utcnow()
+    resource.last_accessed_at = now
+    if req.page_number is not None:
+        resource.last_page_number = req.page_number
+    if req.slide_number is not None:
+        resource.last_slide_number = req.slide_number
+    if req.position_label:
+        resource.last_position_label = req.position_label
+
+    # Record in access history
+    access = AccessHistory(
+        user_id=current_user.id,
+        resource_id=resource.id,
+        page_number=req.page_number or 1,
+        slide_number=req.slide_number or 1,
+        position_label=req.position_label,
+        accessed_at=now
+    )
+    db.add(access)
+    db.commit()
+
+    return {
+        "status": "success",
+        "resource_id": resource.id,
+        "page_number": resource.last_page_number,
+        "slide_number": resource.last_slide_number,
+        "position_label": resource.last_position_label,
+        "last_accessed_at": resource.last_accessed_at
+    }

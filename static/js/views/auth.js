@@ -2,46 +2,52 @@
 const AuthView = {
   renderLogin() {
     return `
-      <div class="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <div class="sm:mx-auto sm:w-full sm:max-w-md text-center">
-          <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-blue-600 text-white shadow-md shadow-blue-500/20 mb-4">
-            ${getIcon('book-open', 'w-6 h-6')}
+      <div class="min-h-screen bg-slate-50/80 flex flex-col justify-center py-12 sm:px-6 lg:px-8 animate-fade-in relative overflow-hidden">
+        <!-- Ambient Background Glows -->
+        <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-gradient-to-b from-blue-400/10 via-indigo-500/10 to-transparent rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="sm:mx-auto sm:w-full sm:max-w-md text-center relative z-10">
+          <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-700 via-indigo-600 to-violet-600 text-white shadow-xl shadow-indigo-500/25 ring-4 ring-indigo-50 mb-4">
+            ${getIcon('book-open', 'w-7 h-7')}
           </div>
-          <h2 class="text-2xl font-bold tracking-tight text-slate-900">My Learning Hub</h2>
-          <p class="mt-1 text-sm text-slate-500">Personal MBA Learning Management &amp; Resource System</p>
+          <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-blue-50 border border-blue-200/70 text-blue-800 text-[10px] font-bold tracking-wider uppercase mb-2">
+            MBA EDITION
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">My Learning Hub</h2>
+          <p class="mt-1 text-xs sm:text-sm text-slate-500 font-normal">Personal MBA Learning Management &amp; Resource System</p>
         </div>
 
-        <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-          <div class="bg-white py-8 px-6 shadow-sm border border-slate-200/80 rounded-2xl sm:px-10">
+        <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative z-10">
+          <div class="bg-white/95 backdrop-blur-sm py-8 sm:py-9 px-6 sm:px-10 shadow-xl shadow-slate-900/5 border border-slate-200/80 rounded-3xl">
             <form id="login-form" class="space-y-4">
               <div>
-                <label for="login-email" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Email Address</label>
+                <label for="login-email" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Email Address</label>
                 <input id="login-email" type="email" required autocomplete="email"
-                  class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-colors"
+                  class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 focus:bg-white transition-all"
                   placeholder="student@mba.edu">
               </div>
 
               <div>
                 <div class="flex items-center justify-between mb-1.5">
-                  <label for="login-password" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider">Password</label>
+                  <label for="login-password" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Password</label>
                 </div>
                 <input id="login-password" type="password" required autocomplete="current-password"
-                  class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-colors"
+                  class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 focus:bg-white transition-all"
                   placeholder="••••••••">
               </div>
 
               <div id="login-error" class="hidden p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs"></div>
 
               <button type="submit" id="login-submit-btn"
-                class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                class="w-full flex justify-center py-3 px-4 rounded-xl shadow-xs text-xs sm:text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 transition-all hover:shadow-md cursor-pointer">
                 Sign In to Hub
               </button>
             </form>
 
             <div class="mt-6 pt-6 border-t border-slate-100 text-center">
-              <p class="text-xs text-slate-500">
+              <p class="text-xs text-slate-500 font-normal">
                 Don't have an account yet?
-                <button id="switch-to-register-btn" class="font-semibold text-blue-600 hover:text-blue-500 ml-1">
+                <button id="switch-to-register-btn" class="font-bold text-blue-600 hover:text-blue-700 hover:underline ml-1 cursor-pointer">
                   Create Personal Account
                 </button>
               </p>
@@ -54,49 +60,55 @@ const AuthView = {
 
   renderRegister() {
     return `
-      <div class="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <div class="sm:mx-auto sm:w-full sm:max-w-md text-center">
-          <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-blue-600 text-white shadow-md shadow-blue-500/20 mb-4">
-            ${getIcon('book-open', 'w-6 h-6')}
+      <div class="min-h-screen bg-slate-50/80 flex flex-col justify-center py-12 sm:px-6 lg:px-8 animate-fade-in relative overflow-hidden">
+        <!-- Ambient Background Glows -->
+        <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-gradient-to-b from-blue-400/10 via-indigo-500/10 to-transparent rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="sm:mx-auto sm:w-full sm:max-w-md text-center relative z-10">
+          <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-700 via-indigo-600 to-violet-600 text-white shadow-xl shadow-indigo-500/25 ring-4 ring-indigo-50 mb-4">
+            ${getIcon('book-open', 'w-7 h-7')}
           </div>
-          <h2 class="text-2xl font-bold tracking-tight text-slate-900">Create Your Learning Hub</h2>
-          <p class="mt-1 text-sm text-slate-500">Set up your personal MBA workspace</p>
+          <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-blue-50 border border-blue-200/70 text-blue-800 text-[10px] font-bold tracking-wider uppercase mb-2">
+            MBA EDITION
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">Create Your Learning Hub</h2>
+          <p class="mt-1 text-xs sm:text-sm text-slate-500 font-normal">Set up your personal MBA workspace</p>
         </div>
 
         <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-          <div class="bg-white py-8 px-6 shadow-sm border border-slate-200/80 rounded-2xl sm:px-10">
+          <div class="bg-white py-8 sm:py-9 px-6 sm:px-10 shadow-lg border border-slate-200/70 rounded-3xl">
             <form id="register-form" class="space-y-4">
               <div>
-                <label for="reg-name" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Full Name</label>
+                <label for="reg-name" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Full Name</label>
                 <input id="reg-name" type="text" required
-                  class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-colors"
+                  class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 focus:bg-white transition-all"
                   placeholder="e.g. Alex Morgan">
               </div>
 
               <div>
-                <label for="reg-email" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Email Address</label>
+                <label for="reg-email" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Email Address</label>
                 <input id="reg-email" type="email" required
-                  class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-colors"
+                  class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 focus:bg-white transition-all"
                   placeholder="student@mba.edu">
               </div>
 
               <div>
-                <label for="reg-program" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Academic Program</label>
+                <label for="reg-program" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Academic Program</label>
                 <input id="reg-program" type="text" value="Master of Business Administration (MBA)"
-                  class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-colors">
+                  class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 focus:bg-white transition-all">
               </div>
 
               <div class="grid grid-cols-2 gap-3">
                 <div>
-                  <label for="reg-year" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Academic Year</label>
-                  <select id="reg-year" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600">
+                  <label for="reg-year" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Academic Year</label>
+                  <select id="reg-year" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 focus:bg-white transition-all cursor-pointer">
                     <option value="Year 1">Year 1</option>
                     <option value="Year 2">Year 2</option>
                   </select>
                 </div>
                 <div>
-                  <label for="reg-semester" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Semester</label>
-                  <select id="reg-semester" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600">
+                  <label for="reg-semester" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Semester</label>
+                  <select id="reg-semester" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 focus:bg-white transition-all cursor-pointer">
                     <option value="Semester 1">Semester 1</option>
                     <option value="Semester 2">Semester 2</option>
                     <option value="Semester 3">Semester 3</option>
@@ -106,24 +118,24 @@ const AuthView = {
               </div>
 
               <div>
-                <label for="reg-password" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Password</label>
+                <label for="reg-password" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Password</label>
                 <input id="reg-password" type="password" required minlength="6"
-                  class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-colors"
+                  class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 focus:bg-white transition-all"
                   placeholder="At least 6 characters">
               </div>
 
               <div id="register-error" class="hidden p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs"></div>
 
               <button type="submit" id="register-submit-btn"
-                class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                class="w-full flex justify-center py-3 px-4 rounded-xl shadow-xs text-xs sm:text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 transition-all hover:shadow-md cursor-pointer">
                 Create Account &amp; Start
               </button>
             </form>
 
             <div class="mt-6 pt-6 border-t border-slate-100 text-center">
-              <p class="text-xs text-slate-500">
+              <p class="text-xs text-slate-500 font-normal">
                 Already registered?
-                <button id="switch-to-login-btn" class="font-semibold text-blue-600 hover:text-blue-500 ml-1">
+                <button id="switch-to-login-btn" class="font-bold text-blue-600 hover:text-blue-700 hover:underline ml-1 cursor-pointer">
                   Sign In
                 </button>
               </p>

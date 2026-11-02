@@ -5,7 +5,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import BASE_DIR
-from app.database import engine, Base
+from app.database import engine, Base, ensure_schema_compatibility
 from app.routers import (
     auth,
     courses,
@@ -16,10 +16,12 @@ from app.routers import (
     progress,
     tasks,
     system,
+    ai,
 )
 
-# Initialize database tables
+# Initialize database tables and ensure schema additions
 Base.metadata.create_all(bind=engine)
+ensure_schema_compatibility()
 
 app = FastAPI(
     title="My Learning Hub — Personal LMS",
@@ -46,6 +48,7 @@ app.include_router(bookmarks.router)
 app.include_router(progress.router)
 app.include_router(tasks.router)
 app.include_router(system.router)
+app.include_router(ai.router)
 
 # Mount static files
 static_dir = BASE_DIR / "static"

@@ -10,26 +10,30 @@ const NotesView = {
         <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 class="text-2xl font-bold tracking-tight text-slate-900">Personal Study Notes</h1>
-            <p class="text-xs text-slate-500 mt-1">Lecture summaries, framework deconstructions, formulas, and revision memos</p>
+            <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-blue-50/90 border border-blue-200/70 text-blue-800 text-[11px] font-semibold tracking-wide uppercase mb-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
+              Executive Study Notebook
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">Personal Study Notes</h1>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1">Lecture summaries, framework deconstructions, formulas, and revision memos</p>
           </div>
-          <button id="btn-create-note-main" class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm transition-colors">
+          <button id="btn-create-note-main" class="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs transition-all hover:shadow-sm cursor-pointer">
             ${getIcon('plus', 'w-3.5 h-3.5')}
-            New Note
+            <span>New Note</span>
           </button>
         </div>
 
         <!-- Filter & Search Toolbar -->
-        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row md:items-center gap-3">
+        <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/70 shadow-2xs flex flex-col md:flex-row md:items-center gap-3">
           <div class="relative flex-1">
-            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
               ${getIcon('search', 'w-4 h-4')}
             </span>
             <input id="notes-search-input" type="text" placeholder="Search notes by title, keyword, or tag..."
-              class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600">
+              class="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 focus:bg-white transition-all">
           </div>
           <div class="w-full md:w-64">
-            <select id="notes-filter-course" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600">
+            <select id="notes-filter-course" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 focus:bg-white transition-all">
               <option value="">All Subjects</option>
             </select>
           </div>
@@ -38,9 +42,9 @@ const NotesView = {
         <!-- Two Column Notes Explorer -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           <!-- Notes List (5 cols) -->
-          <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col max-h-[700px]">
-            <div class="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-              <span class="text-xs font-bold uppercase tracking-wider text-slate-600" id="notes-count-label">Notes (0)</span>
+          <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200/70 shadow-2xs overflow-hidden flex flex-col max-h-[720px]">
+            <div class="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500" id="notes-count-label">Notes (0)</span>
             </div>
             <div class="flex-1 overflow-y-auto divide-y divide-slate-100" id="notes-list-container">
               ${renderLoadingState('Loading notes...')}
@@ -48,7 +52,7 @@ const NotesView = {
           </div>
 
           <!-- Note Active Editor / Viewer (7 cols) -->
-          <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6" id="note-editor-container">
+          <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200/70 shadow-2xs p-6 sm:p-7" id="note-editor-container">
             <div class="py-16 text-center text-slate-400 text-xs">
               Select a note on the left or create a new note to start editing.
             </div>
@@ -129,22 +133,22 @@ const NotesView = {
   renderNoteListItem(note) {
     const isSelected = this.activeNoteId === note.id;
     return `
-      <div class="p-4 cursor-pointer transition-colors ${isSelected ? 'bg-blue-50/70 border-l-4 border-blue-600' : 'hover:bg-slate-50'}"
+      <div class="p-4 cursor-pointer transition-all ${isSelected ? 'bg-blue-50/80 border-l-[3px] border-blue-600 pl-3.5 shadow-2xs' : 'hover:bg-slate-50/80'}"
         onclick="NotesView.selectNote(${note.id})">
         <div class="flex items-start justify-between gap-2 mb-1">
-          <h4 class="text-xs font-bold text-slate-900 truncate">${escapeHtml(note.title)}</h4>
-          <span class="text-[10px] text-slate-400 shrink-0">${formatDate(note.updated_at)}</span>
+          <h4 class="text-xs font-bold ${isSelected ? 'text-blue-900' : 'text-slate-900'} truncate tracking-tight">${escapeHtml(note.title)}</h4>
+          <span class="text-[10px] text-slate-400 shrink-0 font-mono">${formatDate(note.updated_at)}</span>
         </div>
-        <p class="text-[11px] text-slate-500 line-clamp-2 leading-relaxed mb-2">${escapeHtml(note.content.slice(0, 140))}</p>
+        <p class="text-[11px] text-slate-500 line-clamp-2 leading-relaxed mb-2.5 font-normal">${escapeHtml(note.content.slice(0, 140))}</p>
         <div class="flex items-center gap-1.5 flex-wrap">
           ${note.course_name ? `
-            <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-700">
+            <span class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-slate-100 text-slate-700">
               ${escapeHtml(note.course_name)}
             </span>
           ` : ''}
           ${note.resource_title ? `
-            <span class="px-2 py-0.5 rounded text-[10px] font-medium bg-blue-100 text-blue-700">
-              Linked Doc
+            <span class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100">
+              Linked Deck
             </span>
           ` : ''}
         </div>
@@ -163,25 +167,25 @@ const NotesView = {
 
       editor.innerHTML = `
         <div class="space-y-4 animate-fade-in">
-          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+          <div class="flex items-center justify-between pb-3.5 border-b border-slate-100">
             <div class="flex items-center gap-2">
-              <span class="text-[11px] text-slate-400">Last edited: ${formatDateTime(note.updated_at)}</span>
+              <span class="text-[11px] text-slate-400 font-medium">Last edited: ${formatDateTime(note.updated_at)}</span>
             </div>
             <div class="flex items-center gap-2">
-              <button id="note-delete-btn" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors" title="Delete Note">
+              <button id="note-delete-btn" class="p-2 text-slate-400 hover:text-rose-600 rounded-xl hover:bg-rose-50 transition-colors cursor-pointer" title="Delete Note">
                 ${getIcon('trash', 'w-4 h-4')}
               </button>
-              <button id="note-save-btn" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm transition-colors">
+              <button id="note-save-btn" class="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs transition-all hover:shadow-sm cursor-pointer">
                 ${getIcon('check', 'w-3.5 h-3.5')}
-                Save Changes
+                <span>Save Changes</span>
               </button>
             </div>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
-              <label class="block text-[11px] font-semibold text-slate-500 uppercase mb-1">Subject</label>
-              <select id="edit-note-course" class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none">
+              <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Subject</label>
+              <select id="edit-note-course" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200/80 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 focus:bg-white transition-all">
                 <option value="">No Course (General)</option>
                 ${courses.map(c => `
                   <option value="${c.id}" ${note.course_id === c.id ? 'selected' : ''}>${escapeHtml(c.name)}</option>
@@ -189,32 +193,32 @@ const NotesView = {
               </select>
             </div>
             <div>
-              <label class="block text-[11px] font-semibold text-slate-500 uppercase mb-1">Tags (comma separated)</label>
+              <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Tags (comma separated)</label>
               <input id="edit-note-tags" type="text" value="${escapeHtml(note.tags)}" placeholder="e.g. formula, midterm, case-study"
-                class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none">
+                class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200/80 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 focus:bg-white transition-all">
             </div>
           </div>
 
           <div>
-            <label class="block text-[11px] font-semibold text-slate-500 uppercase mb-1">Note Title</label>
+            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Note Title</label>
             <input id="edit-note-title" type="text" value="${escapeHtml(note.title)}"
-              class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-500">
+              class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 focus:bg-white transition-all tracking-tight">
           </div>
 
           <!-- Formatting Helper Toolbar -->
-          <div class="flex items-center gap-1 border border-slate-200 rounded-xl p-1 bg-slate-50 text-xs">
-            <button type="button" class="px-2 py-1 font-bold hover:bg-white rounded" title="Heading" onclick="NotesView.insertFormatting('## ')">H2</button>
-            <button type="button" class="px-2 py-1 font-bold hover:bg-white rounded" title="Subheading" onclick="NotesView.insertFormatting('### ')">H3</button>
-            <div class="h-3 w-px bg-slate-300 mx-1"></div>
-            <button type="button" class="px-2 py-1 font-bold hover:bg-white rounded" title="Bold" onclick="NotesView.insertFormatting('**', '**')">B</button>
-            <button type="button" class="px-2 py-1 italic hover:bg-white rounded" title="Italic" onclick="NotesView.insertFormatting('*', '*')">I</button>
-            <button type="button" class="px-2 py-1 hover:bg-white rounded" title="Bullet List" onclick="NotesView.insertFormatting('- ')">&bull; List</button>
-            <button type="button" class="px-2 py-1 hover:bg-white rounded" title="Numbered List" onclick="NotesView.insertFormatting('1. ')">1. List</button>
-            <button type="button" class="px-2 py-1 hover:bg-white rounded font-mono" title="Code" onclick="NotesView.insertFormatting('\`', '\`')">&lt;/&gt;</button>
+          <div class="flex items-center gap-1 border border-slate-200/80 rounded-xl p-1 bg-slate-50/70 text-xs">
+            <button type="button" class="px-2.5 py-1 font-bold hover:bg-white text-slate-700 rounded-lg transition-colors cursor-pointer" title="Heading" onclick="NotesView.insertFormatting('## ')">H2</button>
+            <button type="button" class="px-2.5 py-1 font-bold hover:bg-white text-slate-700 rounded-lg transition-colors cursor-pointer" title="Subheading" onclick="NotesView.insertFormatting('### ')">H3</button>
+            <div class="h-3.5 w-px bg-slate-200 mx-1"></div>
+            <button type="button" class="px-2.5 py-1 font-bold hover:bg-white text-slate-700 rounded-lg transition-colors cursor-pointer" title="Bold" onclick="NotesView.insertFormatting('**', '**')">B</button>
+            <button type="button" class="px-2.5 py-1 italic hover:bg-white text-slate-700 rounded-lg transition-colors cursor-pointer" title="Italic" onclick="NotesView.insertFormatting('*', '*')">I</button>
+            <button type="button" class="px-2.5 py-1 hover:bg-white text-slate-700 rounded-lg transition-colors cursor-pointer" title="Bullet List" onclick="NotesView.insertFormatting('- ')">&bull; List</button>
+            <button type="button" class="px-2.5 py-1 hover:bg-white text-slate-700 rounded-lg transition-colors cursor-pointer" title="Numbered List" onclick="NotesView.insertFormatting('1. ')">1. List</button>
+            <button type="button" class="px-2.5 py-1 hover:bg-white text-slate-700 rounded-lg font-mono transition-colors cursor-pointer" title="Code" onclick="NotesView.insertFormatting('\`', '\`')">&lt;/&gt;</button>
           </div>
 
           <div>
-            <textarea id="edit-note-content" rows="14" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono leading-relaxed focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600">${escapeHtml(note.content)}</textarea>
+            <textarea id="edit-note-content" rows="15" class="w-full p-4 bg-slate-50 border border-slate-200/80 rounded-xl text-xs font-mono leading-relaxed text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 focus:bg-white transition-all">${escapeHtml(note.content)}</textarea>
           </div>
         </div>
       `;

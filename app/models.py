@@ -24,6 +24,8 @@ class User(Base):
     academic_year = Column(String(50), default="Year 1")
     semester = Column(String(50), default="Semester 1")
     avatar_url = Column(String(255), nullable=True)
+    openai_api_key = Column(String(255), nullable=True)
+    ai_provider = Column(String(50), default="openai")
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -37,6 +39,10 @@ class User(Base):
     notes = relationship("PersonalNote", back_populates="user", cascade="all, delete-orphan")
     tasks = relationship("TaskAssignment", back_populates="user", cascade="all, delete-orphan")
     study_goals = relationship("StudyGoal", back_populates="user", cascade="all, delete-orphan")
+    document_chunks = relationship("DocumentChunk", back_populates="user", cascade="all, delete-orphan")
+    ai_conversations = relationship("AiConversation", back_populates="user", cascade="all, delete-orphan")
+    ai_messages = relationship("AiMessage", back_populates="user", cascade="all, delete-orphan")
+    daily_plan_completions = relationship("DailyPlanCompletion", back_populates="user", cascade="all, delete-orphan")
 
 
 class SessionToken(Base):
@@ -114,6 +120,10 @@ class Resource(Base):
     file_hash = Column(String(64), nullable=True)  # SHA-256
     tags = Column(String(500), default="")  # Comma-separated tags
     is_completed = Column(Boolean, default=False)
+    last_accessed_at = Column(DateTime, nullable=True)
+    last_page_number = Column(Integer, nullable=True, default=1)
+    last_slide_number = Column(Integer, nullable=True, default=1)
+    last_position_label = Column(String(100), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -123,6 +133,7 @@ class Resource(Base):
     bookmarks = relationship("Bookmark", back_populates="resource", cascade="all, delete-orphan")
     access_histories = relationship("AccessHistory", back_populates="resource", cascade="all, delete-orphan")
     notes = relationship("PersonalNote", back_populates="resource")
+    document_chunks = relationship("DocumentChunk", back_populates="resource", cascade="all, delete-orphan")
 
 
 class Bookmark(Base):
@@ -143,10 +154,26 @@ class AccessHistory(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     resource_id = Column(Integer, ForeignKey("resources.id", ondelete="CASCADE"), nullable=False)
+    page_number = Column(Integer, nullable=True, default=1)
+    slide_number = Column(Integer, nullable=True, default=1)
+    position_label = Column(String(100), nullable=True)
     accessed_at = Column(DateTime, default=datetime.utcnow)
 
     user = relationship("User", back_populates="access_histories")
     resource = relationship("Resource", back_populates="access_histories")
+
+
+class DailyPlanCompletion(Base):
+    __tablename__ = "daily_plan_completions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    plan_date = Column(String(10), nullable=False)  # "YYYY-MM-DD"
+    item_key = Column(String(255), nullable=False)  # "topic_1", "task_2", "resource_3", etc.
+    completed = Column(Boolean, default=True)
+    completed_at = Column(DateTime, default=datetime.utcnow)
+
+    user = relationship("User", back_populates="daily_plan_completions")
 
 
 class PersonalNote(Base):
@@ -202,3 +229,51 @@ class TaskAssignment(Base):
 
     user = relationship("User", back_populates="tasks")
     course = relationship("Course", back_populates="tasks")
+
+
+class DocumentChunk(Base):
+    __tablename__ = "document_chunks"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False)
+    resource_id = Column(Integer, ForeignKey("resources.id", ondelete="CASCADE"), nullable=False)
+    chunk_type = Column(String(50), default="slide")  # "slide", "page", "section"
+    chunk_number = Column(Integer, default=1)  # Slide # or Page #
+    title = Column(String(255), nullable=True)  # Slide title or Heading
+    content = Column(Text, nullable=False)  # Extracted text content
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    user = relationship("User", back_populates="document_chunks")
+    resource = relationship("Resource", back_populates="document_chunks")
+
+
+class AiConversation(Base):
+    __tablename__ = "ai_conversations"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    course_id = Column(Integer, ForeignKey("courses.id", ondelete="SET NULL"), nullable=True)
+    resource_id = Column(Integer, ForeignKey("resources.id", ondelete="SET NULL"), nullable=True)
+    title = Column(String(255), nullable=False)
+    mode = Column(String(50), default="learn")  # "learn", "quick_revision", "exam", "business", "ask_anything"
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    user = relationship("User", back_populates="ai_conversations")
+    messages = relationship("AiMessage", back_populates="conversation", cascade="all, delete-orphan", order_by="AiMessage.created_at")
+
+
+class AiMessage(Base):
+    __tablename__ = "ai_messages"
+
+    id = Column(Integer, primary_key=True, index=True)
+    conversation_id = Column(Integer, ForeignKey("ai_conversations.id", ondelete="CASCADE"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    role = Column(String(20), nullable=False)  # "user", "assistant", "system"
+    content = Column(Text, nullable=False)
+    sources_json = Column(Text, nullable=True)  # JSON list of cited chunks/slides
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    conversation = relationship("AiConversation", back_populates="messages")
+    user = relationship("User", back_populates="ai_messages")
