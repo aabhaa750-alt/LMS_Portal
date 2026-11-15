@@ -1326,29 +1326,39 @@ window.router = AppRouter;
 
 // Application Bootstrapper
 document.addEventListener('DOMContentLoaded', async () => {
+  // Check stored student name from localStorage
+  const storedName = (typeof getStoredStudentName === 'function') ? getStoredStudentName() : null;
+
   // Fetch current student profile
   try {
     const user = await API.auth.getMe();
     window.currentUser = user;
-
-    // Update UI elements with user information
-    const userGreetingEl = document.getElementById('header-user-name');
-    if (userGreetingEl) userGreetingEl.textContent = user.full_name;
-    const userAvatarEl = document.getElementById('header-avatar');
-    if (userAvatarEl) userAvatarEl.textContent = user.full_name.charAt(0).toUpperCase();
+    if (storedName) {
+      window.currentUser.full_name = storedName;
+    }
   } catch (err) {
     window.currentUser = {
-      id: 17,
-      full_name: 'Aabha Agrawal',
+      id: 1,
+      full_name: storedName || 'Student',
       program: 'Master of Business Administration (MBA)',
       academic_year: 'Year 1',
       semester: 'Semester 1'
     };
   }
 
+  // Update UI elements with user information
+  if (typeof updateHeaderUserDisplay === 'function') {
+    updateHeaderUserDisplay(storedName || (window.currentUser ? window.currentUser.full_name : 'Student'));
+  }
+
   // Initialize router
   window.router.init();
   await window.router.renderCurrentRoute();
+
+  // If first time visiting on this device/browser (no stored name), show welcome screen
+  if (typeof WelcomeSetup !== 'undefined' && WelcomeSetup.isFirstTime()) {
+    WelcomeSetup.show();
+  }
 
   // Bind Top Bar & Shell Events
   const topSearchBtn = document.getElementById('top-search-btn');

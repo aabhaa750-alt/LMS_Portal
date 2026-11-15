@@ -48,7 +48,9 @@ const MBA_INSIGHTS = [
 ];
 
 function getTimeBasedGreeting(fullName) {
-  const firstName = (fullName || 'MBA Student').trim().split(/\s+/)[0] || 'Aabha';
+  const storedName = (typeof getStoredStudentName === 'function') ? getStoredStudentName() : null;
+  const nameToUse = storedName || fullName || (window.currentUser ? window.currentUser.full_name : '') || 'Student';
+  const firstName = nameToUse.trim().split(/\s+/)[0] || 'Student';
   const now = new Date();
   const minutes = now.getHours() * 60 + now.getMinutes();
 
@@ -87,7 +89,7 @@ const DashboardView = {
   refreshGreeting() {
     const greetingEl = document.getElementById('dash-greeting');
     const subtextEl = document.getElementById('dash-subtext');
-    if (greetingEl && subtextEl && this.currentUserFullName) {
+    if (greetingEl && subtextEl) {
       const { greeting, subtitle } = getTimeBasedGreeting(this.currentUserFullName);
       greetingEl.textContent = greeting;
       subtextEl.textContent = subtitle;
@@ -95,6 +97,7 @@ const DashboardView = {
   },
 
   async render() {
+    const initialGreeting = getTimeBasedGreeting(this.currentUserFullName);
     return `
       <div class="space-y-8 animate-fade-in pb-12">
         <!-- 1. Top Welcome Bar with Dynamic Time-Based Greeting (Bento Hero) -->
@@ -109,8 +112,8 @@ const DashboardView = {
                 <span class="w-2 h-2 rounded-full bg-emerald-500 status-pulse"></span>
                 <span id="dash-academic-badge">MBA Candidate · Semester 1</span>
               </div>
-              <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900" id="dash-greeting">Loading greeting...</h1>
-              <p class="text-sm text-slate-500 font-normal leading-relaxed max-w-xl" id="dash-subtext">Manage, revise, and track your semester coursework.</p>
+              <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900" id="dash-greeting">${escapeHtml(initialGreeting.greeting)}</h1>
+              <p class="text-sm text-slate-500 font-normal leading-relaxed max-w-xl" id="dash-subtext">${escapeHtml(initialGreeting.subtitle)}</p>
             </div>
 
             <!-- Tactile Quick Actions Dock -->
@@ -714,7 +717,8 @@ const DashboardView = {
       ]);
 
       // Save user full name and execute local device dynamic time greeting
-      this.currentUserFullName = data.user_name || 'MBA Student';
+      const storedName = (typeof getStoredStudentName === 'function') ? getStoredStudentName() : null;
+      this.currentUserFullName = storedName || data.user_name || 'MBA Student';
       this.refreshGreeting();
 
       document.getElementById('dash-academic-badge').textContent = `${data.program} • ${data.academic_year}, ${data.semester}`;

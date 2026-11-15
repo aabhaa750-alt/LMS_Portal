@@ -1,6 +1,8 @@
 // Personal Profile View
 const ProfileView = {
   async render() {
+    const currentName = (typeof getStoredStudentName === 'function' ? getStoredStudentName() : null) || (window.currentUser ? window.currentUser.full_name : '') || 'Student';
+    const initial = currentName.trim().charAt(0).toUpperCase() || 'S';
     return `
       <div class="space-y-6 animate-fade-in pb-12 max-w-4xl mx-auto">
         <!-- Header -->
@@ -16,10 +18,10 @@ const ProfileView = {
         <!-- Profile Overview Card -->
         <div class="bg-white rounded-2xl border border-slate-200/70 shadow-2xs hover:shadow-md p-6 sm:p-7 flex flex-col sm:flex-row sm:items-center gap-6 card-hover transition-all">
           <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-700 via-indigo-600 to-violet-700 text-white flex items-center justify-center text-3xl font-extrabold shrink-0 shadow-md shadow-indigo-500/25 ring-4 ring-indigo-50" id="profile-avatar-display">
-            A
+            ${escapeHtml(initial)}
           </div>
           <div class="space-y-1">
-            <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900" id="profile-name-display">Alex Morgan</h2>
+            <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900" id="profile-name-display">${escapeHtml(currentName)}</h2>
             <p class="text-xs sm:text-sm font-semibold text-blue-600" id="profile-program-display">Master of Business Administration (MBA)</p>
             <p class="text-xs text-slate-500 font-medium" id="profile-meta-display">Year 1 • Semester 1 • student@mba.edu</p>
           </div>
@@ -109,6 +111,27 @@ const ProfileView = {
         const academic_year = document.getElementById('prof-year').value.trim();
         const semester = document.getElementById('prof-semester').value.trim();
 
+        if (!full_name) {
+          showToast('Please enter your full name', 'warning');
+          return;
+        }
+
+        // 1. Immediately persist to localStorage
+        if (typeof setStoredStudentName === 'function') {
+          setStoredStudentName(full_name);
+        }
+
+        // 2. Immediately update header display and avatar
+        if (typeof updateHeaderUserDisplay === 'function') {
+          updateHeaderUserDisplay(full_name);
+        }
+
+        // 3. Immediately update DashboardView state and greeting
+        if (window.DashboardView) {
+          window.DashboardView.currentUserFullName = full_name;
+          window.DashboardView.refreshGreeting();
+        }
+
         try {
           const updated = await API.auth.updateProfile({
             full_name,
@@ -116,11 +139,16 @@ const ProfileView = {
             academic_year,
             semester,
           });
-          window.currentUser = updated;
+          window.currentUser = { ...updated, full_name };
           showToast('Profile updated successfully!', 'success');
           await this.loadUserProfile();
         } catch (err) {
-          showToast(err.message, 'error');
+          // If offline or network glitch, preserve locally saved name
+          if (window.currentUser) {
+            window.currentUser.full_name = full_name;
+          }
+          await this.loadUserProfile();
+          showToast('Saved locally: ' + err.message, 'warning');
         }
       };
     }
@@ -129,16 +157,19 @@ const ProfileView = {
   async loadUserProfile() {
     try {
       const user = await API.auth.getMe();
-      window.currentUser = user;
+      const storedName = (typeof getStoredStudentName === 'function') ? getStoredStudentName() : null;
+      const displayName = storedName || user.full_name || 'Student';
+
+      window.currentUser = { ...user, full_name: displayName };
 
       // Overview header
-      document.getElementById('profile-name-display').textContent = user.full_name;
+      document.getElementById('profile-name-display').textContent = displayName;
       document.getElementById('profile-program-display').textContent = user.program;
       document.getElementById('profile-meta-display').textContent = `${user.academic_year} • ${user.semester} • ${user.email}`;
-      document.getElementById('profile-avatar-display').textContent = user.full_name.charAt(0).toUpperCase();
+      document.getElementById('profile-avatar-display').textContent = displayName.charAt(0).toUpperCase() || 'S';
 
       // Form inputs
-      document.getElementById('prof-name').value = user.full_name;
+      document.getElementById('prof-name').value = displayName;
       document.getElementById('prof-email').value = user.email;
       document.getElementById('prof-program').value = user.program;
       document.getElementById('prof-year').value = user.academic_year;

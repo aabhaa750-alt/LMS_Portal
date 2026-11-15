@@ -343,3 +343,163 @@ async function copyToClipboard(text) {
   }
 }
 
+// ==========================================
+// User Identity & First-Time Setup Helpers
+// ==========================================
+const USER_NAME_STORAGE_KEY = 'mylearninghub_student_name';
+
+function getStoredStudentName() {
+  try {
+    const val = localStorage.getItem(USER_NAME_STORAGE_KEY);
+    return val && val.trim() ? val.trim() : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+function setStoredStudentName(name) {
+  try {
+    if (name && typeof name === 'string' && name.trim()) {
+      localStorage.setItem(USER_NAME_STORAGE_KEY, name.trim());
+    }
+  } catch (e) {
+    console.warn('localStorage access error:', e);
+  }
+}
+
+function updateHeaderUserDisplay(fullName) {
+  const name = fullName || getStoredStudentName() || (window.currentUser ? window.currentUser.full_name : '') || 'Student';
+  const userGreetingEl = document.getElementById('header-user-name');
+  if (userGreetingEl) {
+    userGreetingEl.textContent = name;
+  }
+  const userAvatarEl = document.getElementById('header-avatar');
+  if (userAvatarEl) {
+    userAvatarEl.textContent = name.trim().charAt(0).toUpperCase() || 'S';
+  }
+}
+
+const WelcomeSetup = {
+  isFirstTime() {
+    return !getStoredStudentName();
+  },
+
+  show() {
+    const modalContainer = document.getElementById('modal-container');
+    if (!modalContainer) return;
+
+    modalContainer.innerHTML = `
+      <div class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop bg-slate-950/60 backdrop-blur-md animate-fade-in" id="welcome-modal-backdrop">
+        <div class="bg-white rounded-3xl shadow-2xl border border-slate-200/90 max-w-md w-full p-7 sm:p-8 space-y-6 animate-scale-up relative overflow-hidden">
+          <!-- Ambient accent line -->
+          <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600"></div>
+
+          <!-- Welcome Header -->
+          <div class="text-center space-y-3 pt-2">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 via-indigo-600 to-violet-700 text-white flex items-center justify-center mx-auto shadow-md shadow-blue-500/25 ring-4 ring-blue-50">
+              ${getIcon('sparkles', 'w-7 h-7 text-white')}
+            </div>
+            <div class="space-y-1">
+              <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200/70 text-blue-800 text-[11px] font-bold uppercase tracking-wider">
+                <span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
+                Welcome to My Learning Hub
+              </div>
+              <h2 class="text-2xl font-extrabold tracking-tight text-slate-900">Personalize Your Hub</h2>
+              <p class="text-xs text-slate-500 max-w-sm mx-auto leading-relaxed">
+                Enter your full name so your dashboard, greetings, and lecture materials are customized for you.
+              </p>
+            </div>
+          </div>
+
+          <!-- First-Time Setup Form (Full Name Only) -->
+          <form id="welcome-setup-form" class="space-y-4">
+            <div>
+              <label for="welcome-full-name" class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2">
+                Your Full Name
+              </label>
+              <input
+                type="text"
+                id="welcome-full-name"
+                required
+                autocomplete="name"
+                autofocus
+                placeholder="e.g. Rahul Sharma"
+                class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 focus:bg-white transition-all"
+              />
+              <p class="text-[11px] text-slate-400 mt-2 flex items-center gap-1.5">
+                ${getIcon('sparkles', 'w-3 h-3 text-indigo-500')}
+                <span>No password or account registration required.</span>
+              </p>
+            </div>
+
+            <button
+              type="submit"
+              id="welcome-submit-btn"
+              class="w-full inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 transition-all cursor-pointer btn-press"
+            >
+              <span>Get Started</span>
+              <span class="text-base font-normal">&rarr;</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    `;
+
+    const input = document.getElementById('welcome-full-name');
+    if (input) {
+      setTimeout(() => input.focus(), 80);
+    }
+
+    const form = document.getElementById('welcome-setup-form');
+    if (form) {
+      form.onsubmit = async (e) => {
+        e.preventDefault();
+        const inputEl = document.getElementById('welcome-full-name');
+        const name = inputEl ? inputEl.value.trim() : '';
+        if (!name) return;
+
+        // 1. Save to browser localStorage
+        setStoredStudentName(name);
+
+        // 2. Update currentUser global object
+        if (window.currentUser) {
+          window.currentUser.full_name = name;
+        }
+
+        // 3. Update header display and avatar
+        updateHeaderUserDisplay(name);
+
+        // 4. Update Dashboard view dynamic greeting if active
+        if (window.DashboardView) {
+          window.DashboardView.currentUserFullName = name;
+          window.DashboardView.refreshGreeting();
+        }
+
+        // 5. Close modal
+        modalContainer.innerHTML = '';
+
+        // 6. Asynchronously update profile on server so database is kept aligned
+        if (window.API && API.auth && typeof API.auth.updateProfile === 'function') {
+          API.auth.updateProfile({ full_name: name }).catch((err) => {
+            console.log('Background profile sync note:', err);
+          });
+        }
+
+        // 7. Show welcoming toast
+        const firstName = name.split(/\s+/)[0];
+        showToast(`Welcome, ${firstName}!`, 'success');
+
+        // 8. Re-render current dashboard if on dashboard route
+        const hash = window.location.hash.replace('#', '');
+        if (!hash || hash === 'dashboard') {
+          if (window.router && typeof window.router.renderCurrentRoute === 'function') {
+            await window.router.renderCurrentRoute();
+          }
+        }
+      };
+    }
+  }
+};
+window.WelcomeSetup = WelcomeSetup;
+
+

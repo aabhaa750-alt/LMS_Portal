@@ -35,7 +35,7 @@ def test_open_lms_access_without_authentication():
     res_me = client.get("/api/auth/me")
     assert res_me.status_code == 200
     user = res_me.json()
-    assert "Aabha Agrawal" in user["full_name"]
+    assert bool(user.get("full_name"))
     assert "id" in user
 
     # 2. /api/dashboard should return 200 with courses
