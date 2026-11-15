@@ -76,32 +76,21 @@ const ProfileView = {
           </form>
         </div>
 
-        <!-- Change Password Section -->
-        <div class="bg-white rounded-2xl border border-slate-200/70 shadow-sm p-6 sm:p-7 space-y-6">
-          <div class="pb-3.5 border-b border-slate-100">
-            <h3 class="text-sm font-bold text-slate-900 tracking-tight">Security &amp; Password</h3>
-            <p class="text-xs text-slate-500 mt-0.5">Update your login password</p>
+        <!-- Workspace Access Mode -->
+        <div class="bg-white rounded-2xl border border-slate-200/70 shadow-sm p-6 sm:p-7 space-y-3">
+          <div class="flex items-center justify-between pb-3.5 border-b border-slate-100">
+            <div>
+              <h3 class="text-sm font-bold text-slate-900 tracking-tight">Workspace Access</h3>
+              <p class="text-xs text-slate-500 mt-0.5">Direct, open personal study workspace</p>
+            </div>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold border border-emerald-200/60">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+              Direct Access Active
+            </span>
           </div>
-
-          <form id="profile-password-form" class="space-y-4 max-w-md">
-            <div>
-              <label for="pwd-current" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Current Password</label>
-              <input id="pwd-current" type="password" required
-                class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200/80 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 focus:bg-white transition-all">
-            </div>
-
-            <div>
-              <label for="pwd-new" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">New Password</label>
-              <input id="pwd-new" type="password" required minlength="6"
-                class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200/80 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 focus:bg-white transition-all">
-            </div>
-
-            <div class="flex justify-start pt-2">
-              <button type="submit" id="btn-change-pwd" class="px-4 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all cursor-pointer">
-                Update Password
-              </button>
-            </div>
-          </form>
+          <p class="text-xs text-slate-600 leading-relaxed font-normal">
+            Your Learning Hub operates in direct-access mode. You land directly on your MBA dashboard without requiring a username or password. All study materials, notes, deadlines, and AI features remain isolated and persistently stored.
+          </p>
         </div>
       </div>
     `;
@@ -111,42 +100,30 @@ const ProfileView = {
     await this.loadUserProfile();
 
     // Profile form
-    document.getElementById('profile-edit-form').onsubmit = async (e) => {
-      e.preventDefault();
-      const full_name = document.getElementById('prof-name').value.trim();
-      const program = document.getElementById('prof-program').value.trim();
-      const academic_year = document.getElementById('prof-year').value.trim();
-      const semester = document.getElementById('prof-semester').value.trim();
+    const profileForm = document.getElementById('profile-edit-form');
+    if (profileForm) {
+      profileForm.onsubmit = async (e) => {
+        e.preventDefault();
+        const full_name = document.getElementById('prof-name').value.trim();
+        const program = document.getElementById('prof-program').value.trim();
+        const academic_year = document.getElementById('prof-year').value.trim();
+        const semester = document.getElementById('prof-semester').value.trim();
 
-      try {
-        const updated = await API.auth.updateProfile({
-          full_name,
-          program,
-          academic_year,
-          semester,
-        });
-        window.currentUser = updated;
-        showToast('Profile updated successfully!', 'success');
-        await this.loadUserProfile();
-      } catch (err) {
-        showToast(err.message, 'error');
-      }
-    };
-
-    // Password form
-    document.getElementById('profile-password-form').onsubmit = async (e) => {
-      e.preventDefault();
-      const current_password = document.getElementById('pwd-current').value;
-      const new_password = document.getElementById('pwd-new').value;
-
-      try {
-        await API.auth.changePassword({ current_password, new_password });
-        showToast('Password changed successfully.', 'success');
-        document.getElementById('profile-password-form').reset();
-      } catch (err) {
-        showToast(err.message, 'error');
-      }
-    };
+        try {
+          const updated = await API.auth.updateProfile({
+            full_name,
+            program,
+            academic_year,
+            semester,
+          });
+          window.currentUser = updated;
+          showToast('Profile updated successfully!', 'success');
+          await this.loadUserProfile();
+        } catch (err) {
+          showToast(err.message, 'error');
+        }
+      };
+    }
   },
 
   async loadUserProfile() {

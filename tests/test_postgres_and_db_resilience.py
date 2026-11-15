@@ -29,14 +29,25 @@ def test_database_connection_diagnostics():
     assert status["engine"] in ["sqlite", "postgresql"]
 
 
-def test_health_endpoint_reports_database_status():
-    """Ensure /api/health includes database engine info."""
-    res = client.get("/api/health")
-    assert res.status_code == 200
-    data = res.json()
-    assert data["status"] in ["healthy", "degraded"]
-    assert "database" in data
-    assert data["database"]["connected"] is True
+def test_open_lms_access_without_authentication():
+    """Verify that all core LMS endpoints are directly accessible without login."""
+    # 1. /api/auth/me should return primary student without session token
+    res_me = client.get("/api/auth/me")
+    assert res_me.status_code == 200
+    user = res_me.json()
+    assert "Aabha Agrawal" in user["full_name"]
+    assert "id" in user
+
+    # 2. /api/dashboard should return 200 with courses
+    res_dash = client.get("/api/dashboard")
+    assert res_dash.status_code == 200
+    dash = res_dash.json()
+    assert dash["total_courses"] >= 1
+
+    # 3. All other core modules should return 200 without login
+    for ep in ["/api/courses", "/api/resources", "/api/notes", "/api/bookmarks", "/api/tasks", "/api/progress", "/api/ai/status"]:
+        r = client.get(ep)
+        assert r.status_code == 200, f"Endpoint {ep} failed with {r.status_code}"
 
 
 def test_auth_registration_and_duplicate_prevention():

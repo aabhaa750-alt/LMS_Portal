@@ -1235,11 +1235,12 @@ const AppRouter = {
     tasks: TasksView,
     profile: ProfileView,
     settings: SettingsView,
-    login: AuthView,
-    register: AuthView,
   },
 
   async navigate(route, params = {}) {
+    if (!this.routes[route] || route === 'login' || route === 'register') {
+      route = 'dashboard';
+    }
     this.currentRoute = route;
     this.params = params;
     window.location.hash = `#${route}`;
@@ -1248,27 +1249,15 @@ const AppRouter = {
 
   async renderCurrentRoute() {
     const mainContainer = document.getElementById('main-content');
-    const authContainer = document.getElementById('auth-content');
     const appShell = document.getElementById('app-shell');
 
-    // Check if auth view
-    if (this.currentRoute === 'login' || this.currentRoute === 'register' || !window.currentUser) {
-      if (appShell) appShell.classList.add('hidden');
-      if (authContainer) {
-        authContainer.classList.remove('hidden');
-        if (this.currentRoute === 'register') {
-          authContainer.innerHTML = AuthView.renderRegister();
-          AuthView.bindRegisterEvents();
-        } else {
-          authContainer.innerHTML = AuthView.renderLogin();
-          AuthView.bindLoginEvents();
-        }
-      }
-      return;
+    // Default auth routes or missing routes to dashboard
+    if (!this.routes[this.currentRoute] || this.currentRoute === 'login' || this.currentRoute === 'register') {
+      this.currentRoute = 'dashboard';
+      window.location.hash = '#dashboard';
     }
 
-    // Authenticated App Shell
-    if (authContainer) authContainer.classList.add('hidden');
+    // Always ensure the application shell is visible
     if (appShell) appShell.classList.remove('hidden');
 
     // Update Sidebar Active state
@@ -1303,7 +1292,11 @@ const AppRouter = {
           params[key] = val;
         }
       }
-      return { route: routePart || 'dashboard', params };
+      let targetRoute = routePart || 'dashboard';
+      if (!this.routes[targetRoute] || targetRoute === 'login' || targetRoute === 'register') {
+        targetRoute = 'dashboard';
+      }
+      return { route: targetRoute, params };
     };
 
     // Listen to hash changes
@@ -1333,13 +1326,7 @@ window.router = AppRouter;
 
 // Application Bootstrapper
 document.addEventListener('DOMContentLoaded', async () => {
-  // Listen for 401 unauthorized
-  window.addEventListener('auth-required', () => {
-    window.currentUser = null;
-    window.router.navigate('login');
-  });
-
-  // Check current session
+  // Fetch current student profile
   try {
     const user = await API.auth.getMe();
     window.currentUser = user;
@@ -1350,7 +1337,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     const userAvatarEl = document.getElementById('header-avatar');
     if (userAvatarEl) userAvatarEl.textContent = user.full_name.charAt(0).toUpperCase();
   } catch (err) {
-    window.currentUser = null;
+    window.currentUser = {
+      id: 17,
+      full_name: 'Aabha Agrawal',
+      program: 'Master of Business Administration (MBA)',
+      academic_year: 'Year 1',
+      semester: 'Semester 1'
+    };
   }
 
   // Initialize router
@@ -1360,20 +1353,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Bind Top Bar & Shell Events
   const topSearchBtn = document.getElementById('top-search-btn');
   if (topSearchBtn) topSearchBtn.onclick = () => window.appModals.openGlobalSearch();
-
-  const logoutBtn = document.getElementById('header-logout-btn');
-  if (logoutBtn) {
-    logoutBtn.onclick = async () => {
-      try {
-        await API.auth.logout();
-        window.currentUser = null;
-        showToast('Logged out.', 'info');
-        window.router.navigate('login');
-      } catch (e) {
-        showToast(e.message, 'error');
-      }
-    };
-  }
 
   // Mobile menu toggle
   const mobileToggleBtn = document.getElementById('mobile-menu-toggle');

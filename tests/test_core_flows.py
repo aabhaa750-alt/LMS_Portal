@@ -50,11 +50,12 @@ def test_auth_flows():
     logout_res = client.post("/api/auth/logout", cookies=reg_res.cookies)
     assert logout_res.status_code == 200
 
-    # 5. Accessing protected endpoint without cookie should fail
+    # 5. In open mode (no login required), accessing endpoint without cookie returns default student user
     unauth_res = client.get("/api/auth/me")
-    assert unauth_res.status_code == 401
+    assert unauth_res.status_code == 200
+    assert "email" in unauth_res.json()
 
-    # 6. Login back
+    # 6. Login endpoint remains functional
     login_res = client.post("/api/auth/login", json={"email": email, "password": password})
     assert login_res.status_code == 200
     assert "mylearninghub_session" in login_res.cookies

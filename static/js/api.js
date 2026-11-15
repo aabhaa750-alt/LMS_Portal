@@ -19,10 +19,8 @@ const API = {
       const response = await fetch(url, config);
 
       if (response.status === 401) {
-        // Unauthorized
-        window.dispatchEvent(new CustomEvent('auth-required'));
         const errorData = await response.json().catch(() => ({ detail: 'Unauthorized' }));
-        throw new Error(errorData.detail || 'Session expired. Please log in.');
+        throw new Error(errorData.detail || 'Unauthorized access.');
       }
 
       if (!response.ok) {
